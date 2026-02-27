@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 BOTi Mega - Learn All Languages</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #3987b8; --secondary: #2a5f8d; --success: #10b981;
+            --warning: #f59e0b; --danger: #ef4444; --dark: #1f2937;
+            --light: #f3f4f6;
+        }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .player-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: 700;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr 320px;
+            gap: 24px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        .sidebar { padding: 28px; height: fit-content; position: sticky; top: 20px; }
+        .sidebar h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+        .language-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 8px 12px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+        }
+        .lang-btn {
+            padding: 14px 16px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-align: left;
+            margin-bottom: 8px;
+        }
+        .lang-btn:hover { background: #e5f0f8; border-color: var(--primary); }
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        .challenge-area { padding: 40px; }
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--light);
+        }
+        .challenge-info h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+        .challenge-meta { font-size: 14px; color: #888; }
+        .challenge-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+        .challenge-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .rule-box, .task-box, .example-box {
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .rule-box {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e5f0f8 100%);
+            border-left: 4px solid var(--primary);
+        }
+        .task-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid var(--warning);
+        }
+        .example-box {
+            background: var(--dark);
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+            grid-column: 1/-1;
+        }
+        .code-editor {
+            background: var(--dark);
+            border-radius: 10px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        .editor-textarea {
+            width: 100%;
+            min-height: 200px;
+            background: var(--dark);
+            color: #00ff88;
+            border: none;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(57, 135, 184, 0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-secondary {
+            background: var(--light);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .btn-secondary:hover { background: #e5f0f8; }
+        .feedback-box {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        .feedback-box.show { display: block; }
+        .feedback-success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left: 4px solid var(--success);
+            color: #065f46;
+        }
+        .feedback-error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid var(--danger);
+            color: #991b1b;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stats-sidebar { padding: 28px; }
+        .stat-item { margin-bottom: 24px; text-align: center; }
+        .stat-label { font-size: 11px; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+        .stat-value {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .xp-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 12px 0 8px 0;
+        }
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .badges-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .badge-item {
+            background: var(--light);
+            padding: 10px 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 0.5;
+        }
+        .badge-item.unlocked {
+            opacity: 1;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+        }
+        .divider { height: 1px; background: var(--light); margin: 20px 0; }
+        @media (max-width: 1024px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .challenge-content { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 BOTi Mega</h1>
+            <div class="player-badge">
+                <span id="playerName">Max</span> • Level <span id="level">1</span>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <!-- LEFT SIDEBAR -->
+            <div class="card sidebar">
+                <h2>🎯 Languages</h2>
+                <div class="language-tabs">
+                    <button class="tab-btn active" onclick="filterCategory('core')">Core</button>
+                    <button class="tab-btn" onclick="filterCategory('web')">Web</button>
+                    <button class="tab-btn" onclick="filterCategory('data')">Data</button>
+                    <button class="tab-btn" onclick="filterCategory('ai')">AI/LLM</button>
+                    <button class="tab-btn" onclick="filterCategory('robotics')">Robotics</button>
+                </div>
+                <div id="langList"></div>
+            </div>
+
+            <!-- CENTER - CHALLENGE -->
+            <div class="card challenge-area">
+                <div class="challenge-header">
+                    <div class="challenge-info">
+                        <h2 id="title">🐍 Hello World</h2>
+                        <div class="challenge-meta" id="meta">Python • Level 1</div>
+                    </div>
+                    <div class="challenge-badge" id="badge">+75 XP</div>
+                </div>
+
+                <div class="challenge-content">
+                    <div>
+                        <div style="font-size: 12px; color: #3987b8; margin-bottom: 10px; font-weight: 700;">📌 RULE</div>
+                        <div class="rule-box" id="rule">print("text") - outputs text</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #f59e0b; margin-bottom: 10px; font-weight: 700;">🎪 TASK</div>
+                        <div class="task-box" id="task">Output "Welcome to BOTi!"</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <div style="font-size: 12px; color: #3987b8; margin-bottom: 10px; font-weight: 700;">💡 EXAMPLE</div>
+                    <div class="example-box" id="example">print("Hello World")</div>
+                </div>
+
+                <div class="code-editor">
+                    <textarea class="editor-textarea" id="codeInput" placeholder="Write your code here..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="submit()">✅ Submit</button>
+                    <button class="btn-secondary" onclick="showHint()">💡 Hint</button>
+                    <button class="btn-secondary" onclick="showSolution()">👀 Solution</button>
+                    <button class="btn-secondary" onclick="nextChallenge()">➡️ Next</button>
+                </div>
+
+                <div class="feedback-box" id="feedback"></div>
+            </div>
+
+            <!-- RIGHT SIDEBAR - STATS -->
+            <div class="card stats-sidebar">
+                <div class="stat-item">
+                    <div class="stat-label">⭐ Level</div>
+                    <div class="stat-value" id="statLevel">1</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="stat-item">
+                    <div class="stat-label">📊 XP</div>
+                    <div class="stat-value" id="statXP">0</div>
+                    <div class="xp-bar">
+                        <div class="xp-fill" id="xpFill"></div>
+                    </div>
+                    <div style="font-size: 12px; color: #888;"><span id="xpCurrent">0</span>/<span id="xpMax">1000</span> XP</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="stat-item">
+                    <div class="stat-label">🔥 Streak</div>
+                    <div class="stat-value" id="statStreak">0</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-label">✅ Completed</div>
+                    <div class="stat-value" id="statDone">0</div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 16px; background: var(--light); border-radius: 10px;">
+                    <div style="font-size: 12px; font-weight: 700; margin-bottom: 10px; color: var(--dark);">🏆 Badges (5)</div>
+                    <div class="badges-grid">
+                        <div class="badge-item" id="badge1">First</div>
+                        <div class="badge-item" id="badge2">10x</div>
+                        <div class="badge-item" id="badge3">Warrior</div>
+                        <div class="badge-item" id="badge4">Master</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const languages = {
+            core: {
+                python: { emoji: '🐍', name: 'Python', challenges: 30 },
+                javascript: { emoji: '📝', name: 'JavaScript', challenges: 25 },
+                java: { emoji: '☕', name: 'Java', challenges: 20 },
+                csharp: { emoji: '#️⃣', name: 'C#', challenges: 20 },
+                cpp: { emoji: '🔧', name: 'C++', challenges: 25 },
+                rust: { emoji: '🦀', name: 'Rust', challenges: 20 },
+                go: { emoji: '🎯', name: 'Go', challenges: 20 },
+                typescript: { emoji: '🔷', name: 'TypeScript', challenges: 18 },
+                php: { emoji: '🐘', name: 'PHP', challenges: 18 },
+                ruby: { emoji: '💎', name: 'Ruby', challenges: 18 }
+            },
+            web: {
+                html: { emoji: '🔷', name: 'HTML', challenges: 15 },
+                css: { emoji: '🎨', name: 'CSS', challenges: 20 },
+                react: { emoji: '⚛️', name: 'React', challenges: 20 },
+                vue: { emoji: '💚', name: 'Vue.js', challenges: 18 },
+                angular: { emoji: '🔴', name: 'Angular', challenges: 15 },
+                nodejs: { emoji: '🟢', name: 'Node.js', challenges: 18 },
+                docker: { emoji: '🐳', name: 'Docker', challenges: 12 },
+                kubernetes: { emoji: '☸️', name: 'Kubernetes', challenges: 12 }
+            },
+            data: {
+                pandas: { emoji: '📊', name: 'Pandas', challenges: 15 },
+                numpy: { emoji: '🔢', name: 'NumPy', challenges: 15 },
+                sklearn: { emoji: '🤖', name: 'Scikit-Learn', challenges: 18 },
+                tensorflow: { emoji: '🧠', name: 'TensorFlow', challenges: 20 },
+                pytorch: { emoji: '🔥', name: 'PyTorch', challenges: 20 },
+                matplotlib: { emoji: '📈', name: 'Matplotlib', challenges: 12 },
+                seaborn: { emoji: '🎨', name: 'Seaborn', challenges: 12 },
+                sql: { emoji: '📚', name: 'SQL', challenges: 25 }
+            },
+            ai: {
+                prompts: { emoji: '🤖', name: 'Prompt Engineering', challenges: 30 },
+                claude: { emoji: '📚', name: 'Claude API', challenges: 15 },
+                llm: { emoji: '🧠', name: 'LLM Theory', challenges: 12 },
+                rag: { emoji: '🔗', name: 'RAG Systems', challenges: 10 }
+            },
+            robotics: {
+                ros: { emoji: '🤖', name: 'ROS', challenges: 15 },
+                arduino: { emoji: '⚡', name: 'Arduino', challenges: 14 },
+                micropython: { emoji: '💡', name: 'MicroPython', challenges: 12 },
+                assembly: { emoji: '🔌', name: 'Assembly', challenges: 10 },
+                vhdl: { emoji: '🔌', name: 'VHDL', challenges: 12 }
+            }
+        };
+
+        const challenges = {
+            python: [
+                { title: '🐍 Hello World', rule: 'print("text") - outputs text', example: 'print("Hello")', task: 'Output "Welcome to BOTi!"', solution: 'print("Welcome to BOTi!")', xp: 75 },
+                { title: '📦 Variables', rule: 'name = value - stores data', example: 'name = "Alice"\nprint(name)', task: 'Create variable and print it', solution: 'name = "Alice"\nprint(name)', xp: 100 },
+                { title: '🔄 Loops', rule: 'for x in list: repeats code', example: 'for i in [1,2,3]:\n    print(i)', task: 'Loop through [1,2,3]', solution: 'for i in [1,2,3]:\n    print(i)', xp: 150 }
+            ],
+            javascript: [
+                { title: '📝 Console Log', rule: 'console.log() outputs text', example: 'console.log("Hello");', task: 'Output "Welcome!"', solution: 'console.log("Welcome!");', xp: 75 }
+            ],
+            java: [
+                { title: '☕ Hello Java', rule: 'System.out.println()', example: 'System.out.println("Hi");', task: 'Print "Hello"', solution: 'System.out.println("Hello");', xp: 100 }
+            ],
+            csharp: [
+                { title: '#️⃣ Hello C#', rule: 'Console.WriteLine()', example: 'Console.WriteLine("Hi");', task: 'Print "Welcome"', solution: 'Console.WriteLine("Welcome");', xp: 100 }
+            ]
+        };
+
+        let state = {
+            currentLang: 'python',
+            index: 0,
+            level: 1,
+            xp: 0,
+            maxXp: 1000,
+            streak: 0,
+            done: 0
+        };
+
+        function renderLanguages(category) {
+            const list = document.getElementById('langList');
+            list.innerHTML = '';
+            const cats = languages[category] || languages.core;
+            for (let key in cats) {
+                const lang = cats[key];
+                const btn = document.createElement('button');
+                btn.className = 'lang-btn' + (key === state.currentLang ? ' active' : '');
+                btn.textContent = lang.emoji + ' ' + lang.name;
+                btn.onclick = () => selectLang(key);
+                list.appendChild(btn);
+            }
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderLanguages(cat);
+        }
+
+        function selectLang(lang) {
+            state.currentLang = lang;
+            state.index = 0;
+            renderLanguages('core');
+            loadChallenge();
+        }
+
+        function loadChallenge() {
+            const ch = challenges[state.currentLang]?.[state.index] || {
+                title: '📝 Welcome',
+                rule: 'Start learning!',
+                example: 'code here',
+                task: 'Complete challenges',
+                solution: 'write solution',
+                xp: 75
+            };
+            document.getElementById('title').textContent = ch.title;
+            document.getElementById('rule').textContent = ch.rule;
+            document.getElementById('example').textContent = ch.example;
+            document.getElementById('task').textContent = ch.task;
+            document.getElementById('badge').textContent = '+' + ch.xp + ' XP';
+            document.getElementById('codeInput').value = '';
+            clearFeedback();
+        }
+
+        function submit() {
+            const code = document.getElementById('codeInput').value.trim();
+            const ch = challenges[state.currentLang]?.[state.index];
+            if (!code) {
+                showFeedback('⚠️ Write code first!', 'error');
+                return;
+            }
+            if (code.toLowerCase().includes(ch.solution.toLowerCase().split('\n')[0].toLowerCase())) {
+                state.done++;
+                state.xp += ch.xp;
+                if (state.xp >= state.maxXp) {
+                    state.level++;
+                    state.xp -= state.maxXp;
+                    state.maxXp = Math.floor(state.maxXp * 1.15);
+                    showFeedback(`🎉 EXCELLENT!\n+${ch.xp} XP!\n🎊 LEVEL UP! Level ${state.level}!`, 'success');
+                } else {
+                    showFeedback(`🎉 CORRECT!\n+${ch.xp} XP!\n${state.xp}/${state.maxXp}`, 'success');
+                }
+                if (state.done === 1) document.getElementById('badge1').classList.add('unlocked');
+                if (state.done === 10) document.getElementById('badge2').classList.add('unlocked');
+                updateStats();
+            } else {
+                showFeedback('❌ Not quite right.\nCheck the rule again!', 'error');
+            }
+        }
+
+        function showHint() {
+            showFeedback('💡 Hint:\nCheck the example code!', 'warning');
+        }
+
+        function showSolution() {
+            const ch = challenges[state.currentLang]?.[state.index];
+            showFeedback(`✅ SOLUTION:\n\n${ch.solution}`, 'warning');
+        }
+
+        function nextChallenge() {
+            if (state.index < (challenges[state.currentLang]?.length || 1) - 1) {
+                state.index++;
+                loadChallenge();
+            } else {
+                showFeedback('🎊 All challenges done!\nPick another language!', 'success');
+            }
+        }
+
+        function showFeedback(msg, type) {
+            const fb = document.getElementById('feedback');
+            fb.textContent = msg;
+            fb.className = 'feedback-box show feedback-' + type;
+        }
+
+        function clearFeedback() {
+            document.getElementById('feedback').className = 'feedback-box';
+        }
+
+        function updateStats() {
+            document.getElementById('level').textContent = state.level;
+            document.getElementById('statLevel').textContent = state.level;
+            document.getElementById('statXP').textContent = state.xp;
+            document.getElementById('xpCurrent').textContent = state.xp;
+            document.getElementById('xpMax').textContent = state.maxXp;
+            document.getElementById('statDone').textContent = state.done;
+            document.getElementById('xpFill').style.width = (state.xp / state.maxXp * 100) + '%';
+        }
+
+        renderLanguages('core');
+        loadChallenge();
+    </script>
+</body>
+</html>

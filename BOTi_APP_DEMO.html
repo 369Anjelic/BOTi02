@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 BOTi - Dein Code-Coach</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #3987b8;
+            --secondary: #2a5f8d;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+        }
+        
+        html, body { height: 100%; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .player-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(57, 135, 184, 0.3);
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            padding: 28px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .sidebar h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .language-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .lang-btn {
+            padding: 14px 16px;
+            background: var(--light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+        }
+        
+        .lang-btn:hover {
+            background: #e5f0f8;
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+        
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 6px 20px rgba(57, 135, 184, 0.3);
+        }
+        
+        .challenge-area {
+            padding: 40px;
+        }
+        
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .challenge-info h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        .challenge-meta {
+            font-size: 14px;
+            color: #888;
+            font-weight: 500;
+        }
+        
+        .challenge-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            box-shadow: 0 4px 15px rgba(57, 135, 184, 0.3);
+        }
+        
+        .challenge-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .challenge-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .item-label {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .rule-box {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e5f0f8 100%);
+            padding: 16px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .example-box {
+            background: var(--dark);
+            padding: 16px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            color: #00ff88;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .task-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 16px;
+            border-radius: 10px;
+            border-left: 4px solid var(--warning);
+            font-size: 15px;
+            line-height: 1.6;
+            color: #92400e;
+            font-weight: 500;
+        }
+        
+        .code-editor-wrapper {
+            margin-bottom: 24px;
+        }
+        
+        .code-editor {
+            background: var(--dark);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .editor-header {
+            background: #0f1419;
+            padding: 12px 16px;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            justify-content: space-between;
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .editor-textarea {
+            width: 100%;
+            min-height: 220px;
+            background: var(--dark);
+            color: #00ff88;
+            border: none;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            resize: none;
+            outline: none;
+        }
+        
+        .editor-textarea::placeholder {
+            color: #555;
+        }
+        
+        .editor-textarea:focus {
+            background: #1a202c;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(57, 135, 184, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(57, 135, 184, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: var(--light);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: #e5f0f8;
+            transform: translateY(-2px);
+        }
+        
+        .feedback-box {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            display: none;
+            animation: slideIn 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .feedback-box.show {
+            display: block;
+        }
+        
+        .feedback-success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left: 4px solid var(--success);
+            color: #065f46;
+        }
+        
+        .feedback-error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid var(--danger);
+            color: #991b1b;
+        }
+        
+        .feedback-warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid var(--warning);
+            color: #92400e;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stats-sidebar {
+            padding: 28px;
+        }
+        
+        .stat-item {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .stat-value {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .xp-bar-container {
+            margin-top: 12px;
+        }
+        
+        .xp-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .xp-text {
+            font-size: 12px;
+            color: #888;
+            font-weight: 600;
+        }
+        
+        .badges-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 24px;
+            margin-bottom: 14px;
+            color: var(--dark);
+        }
+        
+        .badges-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .badge-item {
+            background: var(--light);
+            padding: 10px 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            border: 2px solid transparent;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+        
+        .badge-item.unlocked {
+            opacity: 1;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border-color: var(--success);
+        }
+        
+        .divider {
+            height: 1px;
+            background: var(--light);
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .sidebar, .stats-sidebar { position: relative; top: 0; }
+            .challenge-content { grid-template-columns: 1fr; }
+            .header-right { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 BOTi</h1>
+            <div class="header-right">
+                <span style="font-size: 14px; color: #888;">Dein persönlicher Code-Coach</span>
+                <div class="player-badge">
+                    <span id="playerName">Max</span> • Level <span id="level">1</span>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-grid">
+            <!-- LEFT SIDEBAR -->
+            <div class="card sidebar">
+                <h2>🎯 Sprachen</h2>
+                <div class="language-list">
+                    <button class="lang-btn active" onclick="selectLang('python')">🐍 Python</button>
+                    <button class="lang-btn" onclick="selectLang('javascript')">📝 JavaScript</button>
+                    <button class="lang-btn" onclick="selectLang('html')">🔷 HTML</button>
+                    <button class="lang-btn" onclick="selectLang('css')">🎨 CSS</button>
+                    <button class="lang-btn" onclick="selectLang('sql')">📊 SQL</button>
+                </div>
+            </div>
+            
+            <!-- CENTER - CHALLENGE -->
+            <div class="card challenge-area">
+                <div class="challenge-header">
+                    <div class="challenge-info">
+                        <h2 id="title">🐍 Hello World</h2>
+                        <div class="challenge-meta">Python • Level 1</div>
+                    </div>
+                    <div class="challenge-badge" id="badge">+75 XP</div>
+                </div>
+                
+                <div class="challenge-content">
+                    <div class="challenge-item">
+                        <div class="item-label">📌 DIE REGEL</div>
+                        <div class="rule-box" id="rule">print("text") - gibt Text aus</div>
+                    </div>
+                    
+                    <div class="challenge-item">
+                        <div class="item-label">🎪 DEINE AUFGABE</div>
+                        <div class="task-box" id="task">Gib "Willkommen bei BOTi!" aus</div>
+                    </div>
+                </div>
+                
+                <div class="challenge-item" style="grid-column: 1/-1;">
+                    <div class="item-label">💡 BEISPIEL</div>
+                    <div class="example-box" id="example">print("Hallo Welt")</div>
+                </div>
+                
+                <div class="code-editor-wrapper">
+                    <div class="code-editor">
+                        <div class="editor-header">
+                            <span>Code Editor</span>
+                            <span id="langDisplay">Python</span>
+                        </div>
+                        <textarea class="editor-textarea" id="codeInput" placeholder="Schreib hier deinen Code..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" onclick="submit()">✅ Code Absenden</button>
+                    <button class="btn-secondary" onclick="showHint()">💡 Tipp</button>
+                    <button class="btn-secondary" onclick="showSolution()">👀 Lösung</button>
+                    <button class="btn-secondary" onclick="nextChallenge()">➡️ Nächste</button>
+                </div>
+                
+                <div class="feedback-box" id="feedback"></div>
+            </div>
+            
+            <!-- RIGHT SIDEBAR - STATS -->
+            <div class="card stats-sidebar">
+                <div class="stat-item">
+                    <div class="stat-label">⭐ Level</div>
+                    <div class="stat-value" id="statLevel">1</div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="stat-item">
+                    <div class="stat-label">📊 Experience Points</div>
+                    <div class="stat-value" id="statXP">0</div>
+                    <div class="xp-bar-container">
+                        <div class="xp-bar">
+                            <div class="xp-fill" id="xpFill" style="width: 0%;"></div>
+                        </div>
+                        <div class="xp-text"><span id="xpCurrent">0</span>/<span id="xpMax">1000</span> XP</div>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="stat-item">
+                    <div class="stat-label">🔥 Streak</div>
+                    <div class="stat-value" id="statStreak">0</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-label">✅ Challenges</div>
+                    <div class="stat-value" id="statDone">0</div>
+                </div>
+                
+                <div class="badges-title">🏆 Achievements</div>
+                <div class="badges-grid">
+                    <div class="badge-item" id="badge1">First Quest</div>
+                    <div class="badge-item" id="badge2">10 Quests</div>
+                    <div class="badge-item" id="badge3">Warrior</div>
+                    <div class="badge-item" id="badge4">Master</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const challenges = {
+            python: [
+                { title: '🐍 Hello World', rule: 'print("text") - gibt Text aus', example: 'print("Hallo Welt")', task: 'Gib "Willkommen bei BOTi!" aus', solution: 'print("Willkommen bei BOTi!")', hint1: 'Nutze print() mit Text', xp: 75, level: 1 },
+                { title: '📦 Variables', rule: 'name = wert - speichert einen Wert', example: 'alter = 25\nprint(alter)', task: 'Erstelle Variable "dein_name" und gib aus', solution: 'dein_name = "Max"\nprint(dein_name)', hint1: 'name = "Dein Name"', xp: 100, level: 1 },
+                { title: '🔄 For Loops', rule: 'for x in liste: code', example: 'for i in [1, 2, 3]:\n    print(i)', task: 'Loop für [10, 20, 30]', solution: 'for n in [10, 20, 30]:\n    print(n)', hint1: 'for n in [10, 20, 30]:', xp: 200, level: 2 },
+            ],
+            javascript: [
+                { title: '📝 Console Log', rule: 'console.log(text) - gibt aus', example: 'console.log("Hello");', task: 'Gib "Willkommen!" aus', solution: 'console.log("Willkommen!");', hint1: 'console.log("Text")', xp: 75, level: 1 },
+            ],
+            html: [
+                { title: '🔷 Heading', rule: '<h1>...</h1> - Überschrift', example: '<h1>Title</h1>', task: 'Erstelle <h1> mit "Willkommen"', solution: '<h1>Willkommen</h1>', hint1: '<h1>Text</h1>', xp: 75, level: 1 },
+            ],
+            css: [
+                { title: '🎨 Colors', rule: 'color: value - Text Farbe', example: 'h1 { color: blue; }', task: 'Mach Text rot', solution: 'p { color: red; }', hint1: 'color: red;', xp: 75, level: 1 },
+            ],
+            sql: [
+                { title: '📊 SELECT', rule: 'SELECT col FROM table', example: 'SELECT name FROM users;', task: 'Wähle alle Namen', solution: 'SELECT * FROM users;', hint1: 'SELECT * FROM ...', xp: 100, level: 1 },
+            ],
+        };
+        
+        let state = {
+            currentLang: 'python',
+            index: 0,
+            level: 1,
+            xp: 0,
+            maxXp: 1000,
+            streak: 0,
+            done: 0,
+            hintShown: 0,
+        };
+        
+        function selectLang(lang) {
+            state.currentLang = lang;
+            state.index = 0;
+            state.hintShown = 0;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            loadChallenge();
+        }
+        
+        function loadChallenge() {
+            const ch = challenges[state.currentLang][state.index];
+            document.getElementById('title').textContent = ch.title;
+            document.getElementById('rule').textContent = ch.rule;
+            document.getElementById('example').textContent = ch.example;
+            document.getElementById('task').textContent = ch.task;
+            document.getElementById('badge').textContent = `+${ch.xp} XP`;
+            document.getElementById('langDisplay').textContent = state.currentLang.charAt(0).toUpperCase() + state.currentLang.slice(1);
+            document.getElementById('codeInput').value = '';
+            clearFeedback();
+            state.hintShown = 0;
+        }
+        
+        function submit() {
+            const code = document.getElementById('codeInput').value.trim();
+            const ch = challenges[state.currentLang][state.index];
+            
+            if (!code) {
+                showFeedback('⚠️ Schreib erst Code!', 'warning');
+                return;
+            }
+            
+            if (code.toLowerCase().includes(ch.solution.toLowerCase().split('\n')[0].toLowerCase())) {
+                state.done++;
+                const oldLevel = state.level;
+                state.xp += ch.xp;
+                
+                while (state.xp >= state.maxXp) {
+                    state.xp -= state.maxXp;
+                    state.level++;
+                    state.maxXp = Math.floor(state.maxXp * 1.15);
+                }
+                
+                let msg = `🎉 QUEST COMPLETED!\n\n✅ +${ch.xp} XP verdient!`;
+                if (state.level > oldLevel) {
+                    msg += `\n🎊 LEVEL UP! Level ${state.level}!`;
+                    if (state.done === 1) document.getElementById('badge1').classList.add('unlocked');
+                }
+                msg += `\n📊 ${state.xp}/${state.maxXp} XP`;
+                
+                showFeedback(msg, 'success');
+                updateStats();
+            } else {
+                showFeedback('❌ Nicht ganz richtig.\nSchau die Regel nochmal an!', 'error');
+            }
+        }
+        
+        function showHint() {
+            const ch = challenges[state.currentLang][state.index];
+            showFeedback(`💡 Hinweis:\n${ch.hint1}`, 'warning');
+        }
+        
+        function showSolution() {
+            const ch = challenges[state.currentLang][state.index];
+            showFeedback(`✅ LÖSUNG:\n\n${ch.solution}`, 'warning');
+        }
+        
+        function nextChallenge() {
+            if (state.index < challenges[state.currentLang].length - 1) {
+                state.index++;
+                loadChallenge();
+            } else {
+                showFeedback('🎊 Alle Challenges gemacht!\nWähle eine neue Sprache!', 'success');
+            }
+        }
+        
+        function showFeedback(msg, type) {
+            const fb = document.getElementById('feedback');
+            fb.textContent = msg;
+            fb.classList.remove('feedback-success', 'feedback-error', 'feedback-warning');
+            fb.classList.add('show', 'feedback-' + type);
+        }
+        
+        function clearFeedback() {
+            const fb = document.getElementById('feedback');
+            fb.classList.remove('show');
+        }
+        
+        function updateStats() {
+            document.getElementById('level').textContent = state.level;
+            document.getElementById('statLevel').textContent = state.level;
+            document.getElementById('statXP').textContent = state.xp;
+            document.getElementById('xpCurrent').textContent = state.xp;
+            document.getElementById('xpMax').textContent = state.maxXp;
+            document.getElementById('statDone').textContent = state.done;
+            document.getElementById('statStreak').textContent = state.streak;
+            
+            const pct = (state.xp / state.maxXp) * 100;
+            document.getElementById('xpFill').style.width = pct + '%';
+            
+            if (state.done >= 10) document.getElementById('badge2').classList.add('unlocked');
+        }
+        
+        loadChallenge();
+    </script>
+</body>
+</html>
